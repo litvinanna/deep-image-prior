@@ -3,8 +3,6 @@
 
 # **MAKING PICTURES
 
-# In[2]:
-
 
 from PIL import Image
 import PIL
@@ -23,7 +21,6 @@ mask_file = "genome_mask.png"
 out_file = "genome_out_hil_mask.png"
 
 
-# In[4]:
 
 
 #READ SEQ
