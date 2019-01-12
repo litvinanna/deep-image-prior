@@ -10,7 +10,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-def crop_image(img, d=32):
+def crop_image(img, d=32): # not needed for 1d
     '''Make dimensions divisible by `d`'''
 
     new_size = (img.size[0] - img.size[0] % d, 
@@ -26,7 +26,7 @@ def crop_image(img, d=32):
     img_cropped = img.crop(bbox)
     return img_cropped
 
-def get_params(opt_over, net, net_input, downsampler=None):
+def get_params(opt_over, net, net_input, downsampler=None): ## the most imp -- list of tensors to optimize over
     '''Returns parameters that we want to optimize over.
 
     Args:
@@ -50,16 +50,16 @@ def get_params(opt_over, net, net_input, downsampler=None):
         else:
             assert False, 'what is it?'
             
-    return params
+    return params # nothing to change for 1d????
 
-def get_image_grid(images_np, nrow=8):
+def get_image_grid(images_np, nrow=8): # not needed for 1d
     '''Creates a grid from a list of images by concatenating them.'''
     images_torch = [torch.from_numpy(x) for x in images_np]
     torch_grid = torchvision.utils.make_grid(images_torch, nrow)
     
     return torch_grid.numpy()
 
-def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos'):
+def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos'): #not needed for 1d
     """Draws images in a grid
     
     Args:
@@ -86,12 +86,12 @@ def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos'):
     
     return grid
 
-def load(path):
+def load(path): #not needed for 1d
     """Load PIL image."""
     img = Image.open(path)
     return img
 
-def get_image(path, imsize=-1):
+def get_image(path, imsize=-1): #not needed for 1d
     """Load an image and resize to a cpecific size. 
 
     Args: 
@@ -124,7 +124,7 @@ def fill_noise(x, noise_type):
     else:
         assert False
 
-def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10):
+def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10): # to change in 1d
     """Returns a pytorch.Tensor of size (1 x `input_depth` x `spatial_size[0]` x `spatial_size[1]`) 
     initialized in a specific way.
     Args:
@@ -138,11 +138,12 @@ def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10):
         spatial_size = (spatial_size, spatial_size)
     if method == 'noise':
         shape = [1, input_depth, spatial_size[0], spatial_size[1]]
+#         shape = [1, input_depth, spatial_size]
         net_input = torch.zeros(shape)
         
         fill_noise(net_input, noise_type)
         net_input *= var            
-    elif method == 'meshgrid': 
+    elif method == 'meshgrid': #not needed in 1d
         assert input_depth == 2
         X, Y = np.meshgrid(np.arange(0, spatial_size[1])/float(spatial_size[1]-1), np.arange(0, spatial_size[0])/float(spatial_size[0]-1))
         meshgrid = np.concatenate([X[None,:], Y[None,:]])
@@ -152,7 +153,7 @@ def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10):
         
     return net_input
 
-def pil_to_np(img_PIL):
+def pil_to_np(img_PIL): #not needed in 1d
     '''Converts image in PIL format to np.array.
     
     From W x H x C [0...255] to C x W x H [0..1]
@@ -166,7 +167,7 @@ def pil_to_np(img_PIL):
 
     return ar.astype(np.float32) / 255.
 
-def np_to_pil(img_np): 
+def np_to_pil(img_np): #not needed in 1d
     '''Converts image in np.array format to PIL image.
     
     From C x W x H [0..1] to  W x H x C [0...255]
@@ -180,14 +181,31 @@ def np_to_pil(img_np):
 
     return Image.fromarray(ar)
 
-def np_to_torch(img_np):
+def np_to_torch(img_np): #looks like no change for 1d
     '''Converts image in numpy.array to torch.Tensor.
 
     From C x W x H [0..1] to  C x W x H [0..1]
     '''
-    return torch.from_numpy(img_np)[None, :]
+    
+    '''for 1d will need 
+    Converts sequence in numpy.array to torch.Tensor.
 
-def torch_to_np(img_var):
+    From C x W [0..1] to  C x W [0..1]
+    '''
+    
+    
+    return torch.from_numpy(img_np)[None, :] # why is [None, :] here?  -- to add one more dimension?
+
+        '''
+        img_np = np.array([0])
+        print(torch.from_numpy(img_np))
+        print(torch.from_numpy(img_np)[None, :])
+        tensor([0])
+        tensor([[0]])
+
+        '''
+
+def torch_to_np(img_var): #looks like no change for 1d???
     '''Converts an image in torch.Tensor format to np.array.
 
     From 1 x C x W x H [0..1] to  C x W x H [0..1]
@@ -199,11 +217,11 @@ def optimize(optimizer_type, parameters, closure, LR, num_iter):
     """Runs optimization loop.
 
     Args:
-        optimizer_type: 'LBFGS' of 'adam'
-        parameters: list of Tensors to optimize over
-        closure: function, that returns loss variable
-        LR: learning rate
-        num_iter: number of iterations 
+        optimizer_type: 'LBFGS' of 'adam' #no change
+        parameters: list of Tensors to optimize over ## changable part!!!
+        closure: function, that returns loss variable #no change
+        LR: learning rate #no change
+        num_iter: number of iterations  #no change
     """
     if optimizer_type == 'LBFGS':
         # Do several steps with adam first
