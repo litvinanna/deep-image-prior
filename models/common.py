@@ -8,33 +8,37 @@ def add_module(self, module):
     
 torch.nn.Module.add = add_module
 
-class Concat(nn.Module):
+class Concat(nn.Module): # may need to rewrite later
     def __init__(self, dim, *args):
         super(Concat, self).__init__()
         self.dim = dim
+#         print("concat, dim {}".format(dim))
 
         for idx, module in enumerate(args):
             self.add_module(str(idx), module)
 
-    def forward(self, input):
+    def forward(self, input): #надо понять на примере 2d что просисходит в этой функции
+
         inputs = []
         for module in self._modules.values():
             inputs.append(module(input))
-
+        
         inputs_shapes2 = [x.shape[2] for x in inputs]
-        inputs_shapes3 = [x.shape[3] for x in inputs]        
+#         print("inputs_shapes2: {}".format(inputs_shapes2))
 
-        if np.all(np.array(inputs_shapes2) == min(inputs_shapes2)) and np.all(np.array(inputs_shapes3) == min(inputs_shapes3)):
+        if np.all(np.array(inputs_shapes2) == min(inputs_shapes2)):
             inputs_ = inputs
         else:
-            target_shape2 = min(inputs_shapes2)
-            target_shape3 = min(inputs_shapes3)
-
+            print("wrong shapes:{}".format(inputs_shapes2))
+            target_shape2 = min(inputs_shapes2)   
+#             print("target_shape2:{}".format(target_shape2))
             inputs_ = []
             for inp in inputs: 
-                diff2 = (inp.size(2) - target_shape2) // 2 
-                diff3 = (inp.size(3) - target_shape3) // 2 
-                inputs_.append(inp[:, :, diff2: diff2 + target_shape2, diff3:diff3 + target_shape3])
+#                 print(inp.shape)
+                diff2 = (inp.size(2) - target_shape2) // 2  
+#                 print("diff2:{}".format(diff2))
+                inputs_.append(inp[:, :, diff2: diff2 + target_shape2])
+#                 print("new boundaries {}:{}".format(diff2, diff2 + target_shape2))
 
         return torch.cat(inputs_, dim=self.dim)
 
@@ -60,17 +64,17 @@ class GenNoise(nn.Module):
         return x
 
 
-class Swish(nn.Module):
-    """
-        https://arxiv.org/abs/1710.05941
-        The hype was so huge that I could not help but try it
-    """
-    def __init__(self):
-        super(Swish, self).__init__()
-        self.s = nn.Sigmoid()
+# class Swish(nn.Module):
+#     """
+#         https://arxiv.org/abs/1710.05941
+#         The hype was so huge that I could not help but try it
+#     """
+#     def __init__(self):
+#         super(Swish, self).__init__()
+#         self.s = nn.Sigmoid()
 
-    def forward(self, x):
-        return x * self.s(x)
+#     def forward(self, x):
+#         return x * self.s(x)
 
 
 def act(act_fun = 'LeakyReLU'):
@@ -93,7 +97,8 @@ def act(act_fun = 'LeakyReLU'):
 
 
 def bn(num_features):
-    return nn.BatchNorm2d(num_features)
+#     return nn.BatchNorm2d(num_features)
+    return nn.BatchNorm1d(num_features)
 
 
 def conv(in_f, out_f, kernel_size, stride=1, bias=True, pad='zero', downsample_mode='stride'):
@@ -101,10 +106,12 @@ def conv(in_f, out_f, kernel_size, stride=1, bias=True, pad='zero', downsample_m
     if stride != 1 and downsample_mode != 'stride':
 
         if downsample_mode == 'avg':
-            downsampler = nn.AvgPool2d(stride, stride)
+#             downsampler = nn.AvgPool2d(stride, stride)
+            downsampler = nn.AvgPool1d(stride, stride)
         elif downsample_mode == 'max':
-            downsampler = nn.MaxPool2d(stride, stride)
-        elif downsample_mode  in ['lanczos2', 'lanczos3']:
+#             downsampler = nn.MaxPool2d(stride, stride)
+            downsampler = nn.MaxPool1d(stride, stride)
+        elif downsample_mode  in ['lanczos2', 'lanczos3']: #????
             downsampler = Downsampler(n_planes=out_f, factor=stride, kernel_type=downsample_mode, phase=0.5, preserve_size=True)
         else:
             assert False
@@ -114,10 +121,12 @@ def conv(in_f, out_f, kernel_size, stride=1, bias=True, pad='zero', downsample_m
     padder = None
     to_pad = int((kernel_size - 1) / 2)
     if pad == 'reflection':
-        padder = nn.ReflectionPad2d(to_pad)
+#         padder = nn.ReflectionPad2d(to_pad)
+        padder = nn.ReflectionPad1d(to_pad)
         to_pad = 0
   
-    convolver = nn.Conv2d(in_f, out_f, kernel_size, stride, padding=to_pad, bias=bias)
+#     convolver = nn.Conv2d(in_f, out_f, kernel_size, stride, padding=to_pad, bias=bias)
+    convolver = nn.Conv1d(in_f, out_f, kernel_size, stride, padding=to_pad, bias=bias)
 
 
     layers = filter(lambda x: x is not None, [padder, convolver, downsampler])

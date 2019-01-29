@@ -10,21 +10,21 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-def crop_image(img, d=32): # not needed for 1d
-    '''Make dimensions divisible by `d`'''
+# def crop_image(img, d=32): # not needed for 1d
+#     '''Make dimensions divisible by `d`'''
 
-    new_size = (img.size[0] - img.size[0] % d, 
-                img.size[1] - img.size[1] % d)
+#     new_size = (img.size[0] - img.size[0] % d, 
+#                 img.size[1] - img.size[1] % d)
 
-    bbox = [
-            int((img.size[0] - new_size[0])/2), 
-            int((img.size[1] - new_size[1])/2),
-            int((img.size[0] + new_size[0])/2),
-            int((img.size[1] + new_size[1])/2),
-    ]
+#     bbox = [
+#             int((img.size[0] - new_size[0])/2), 
+#             int((img.size[1] - new_size[1])/2),
+#             int((img.size[0] + new_size[0])/2),
+#             int((img.size[1] + new_size[1])/2),
+#     ]
 
-    img_cropped = img.crop(bbox)
-    return img_cropped
+#     img_cropped = img.crop(bbox)
+#     return img_cropped
 
 def get_params(opt_over, net, net_input, downsampler=None): ## the most imp -- list of tensors to optimize over
     '''Returns parameters that we want to optimize over.
@@ -52,66 +52,66 @@ def get_params(opt_over, net, net_input, downsampler=None): ## the most imp -- l
             
     return params # nothing to change for 1d????
 
-def get_image_grid(images_np, nrow=8): # not needed for 1d
-    '''Creates a grid from a list of images by concatenating them.'''
-    images_torch = [torch.from_numpy(x) for x in images_np]
-    torch_grid = torchvision.utils.make_grid(images_torch, nrow)
+# def get_image_grid(images_np, nrow=8): # not needed for 1d
+#     '''Creates a grid from a list of images by concatenating them.'''
+#     images_torch = [torch.from_numpy(x) for x in images_np]
+#     torch_grid = torchvision.utils.make_grid(images_torch, nrow)
     
-    return torch_grid.numpy()
+#     return torch_grid.numpy()
 
-def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos'): #not needed for 1d
-    """Draws images in a grid
+# def plot_image_grid(images_np, nrow =8, factor=1, interpolation='lanczos'): #not needed for 1d
+#     """Draws images in a grid
     
-    Args:
-        images_np: list of images, each image is np.array of size 3xHxW of 1xHxW
-        nrow: how many images will be in one row
-        factor: size if the plt.figure 
-        interpolation: interpolation used in plt.imshow
-    """
-    n_channels = max(x.shape[0] for x in images_np)
-    assert (n_channels == 3) or (n_channels == 1), "images should have 1 or 3 channels"
+#     Args:
+#         images_np: list of images, each image is np.array of size 3xHxW of 1xHxW
+#         nrow: how many images will be in one row
+#         factor: size if the plt.figure 
+#         interpolation: interpolation used in plt.imshow
+#     """
+#     n_channels = max(x.shape[0] for x in images_np)
+#     assert (n_channels == 3) or (n_channels == 1), "images should have 1 or 3 channels"
     
-    images_np = [x if (x.shape[0] == n_channels) else np.concatenate([x, x, x], axis=0) for x in images_np]
+#     images_np = [x if (x.shape[0] == n_channels) else np.concatenate([x, x, x], axis=0) for x in images_np]
 
-    grid = get_image_grid(images_np, nrow)
+#     grid = get_image_grid(images_np, nrow)
     
-    plt.figure(figsize=(len(images_np) + factor, 12 + factor))
+#     plt.figure(figsize=(len(images_np) + factor, 12 + factor))
     
-    if images_np[0].shape[0] == 1:
-        plt.imshow(grid[0], cmap='gray', interpolation=interpolation)
-    else:
-        plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation)
+#     if images_np[0].shape[0] == 1:
+#         plt.imshow(grid[0], cmap='gray', interpolation=interpolation)
+#     else:
+#         plt.imshow(grid.transpose(1, 2, 0), interpolation=interpolation)
     
-    plt.show()
+#     plt.show()
     
-    return grid
+#     return grid
 
-def load(path): #not needed for 1d
-    """Load PIL image."""
-    img = Image.open(path)
-    return img
+# def load(path): #not needed for 1d
+#     """Load PIL image."""
+#     img = Image.open(path)
+#     return img
 
-def get_image(path, imsize=-1): #not needed for 1d
-    """Load an image and resize to a cpecific size. 
+# def get_image(path, imsize=-1): #not needed for 1d
+#     """Load an image and resize to a cpecific size. 
 
-    Args: 
-        path: path to image
-        imsize: tuple or scalar with dimensions; -1 for `no resize`
-    """
-    img = load(path)
+#     Args: 
+#         path: path to image
+#         imsize: tuple or scalar with dimensions; -1 for `no resize`
+#     """
+#     img = load(path)
 
-    if isinstance(imsize, int):
-        imsize = (imsize, imsize)
+#     if isinstance(imsize, int):
+#         imsize = (imsize, imsize)
 
-    if imsize[0]!= -1 and img.size != imsize:
-        if imsize[0] > img.size[0]:
-            img = img.resize(imsize, Image.BICUBIC)
-        else:
-            img = img.resize(imsize, Image.ANTIALIAS)
+#     if imsize[0]!= -1 and img.size != imsize:
+#         if imsize[0] > img.size[0]:
+#             img = img.resize(imsize, Image.BICUBIC)
+#         else:
+#             img = img.resize(imsize, Image.ANTIALIAS)
 
-    img_np = pil_to_np(img)
+#     img_np = pil_to_np(img)
 
-    return img, img_np
+#     return img, img_np
 
 
 
@@ -124,7 +124,7 @@ def fill_noise(x, noise_type):
     else:
         assert False
 
-def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10): # to change in 1d
+def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10): # changed in 1d
     """Returns a pytorch.Tensor of size (1 x `input_depth` x `spatial_size[0]` x `spatial_size[1]`) 
     initialized in a specific way.
     Args:
@@ -134,52 +134,52 @@ def get_noise(input_depth, method, spatial_size, noise_type='u', var=1./10): # t
         noise_type: 'u' for uniform; 'n' for normal
         var: a factor, a noise will be multiplicated by. Basically it is standard deviation scaler. 
     """
-    if isinstance(spatial_size, int):
-        spatial_size = (spatial_size, spatial_size)
+#     if isinstance(spatial_size, int):
+#         spatial_size = (spatial_size, spatial_size)
     if method == 'noise':
-        shape = [1, input_depth, spatial_size[0], spatial_size[1]]
-#         shape = [1, input_depth, spatial_size]
+#         shape = [1, input_depth, spatial_size[0], spatial_size[1]]
+        shape = [1, input_depth, spatial_size]
         net_input = torch.zeros(shape)
         
         fill_noise(net_input, noise_type)
         net_input *= var            
-    elif method == 'meshgrid': #not needed in 1d
-        assert input_depth == 2
-        X, Y = np.meshgrid(np.arange(0, spatial_size[1])/float(spatial_size[1]-1), np.arange(0, spatial_size[0])/float(spatial_size[0]-1))
-        meshgrid = np.concatenate([X[None,:], Y[None,:]])
-        net_input=  np_to_torch(meshgrid)
+#     elif method == 'meshgrid': #not needed in 1d
+#         assert input_depth == 2
+#         X, Y = np.meshgrid(np.arange(0, spatial_size[1])/float(spatial_size[1]-1), np.arange(0, spatial_size[0])/float(spatial_size[0]-1))
+#         meshgrid = np.concatenate([X[None,:], Y[None,:]])
+#         net_input=  np_to_torch(meshgrid)
     else:
         assert False
         
     return net_input
 
-def pil_to_np(img_PIL): #not needed in 1d
-    '''Converts image in PIL format to np.array.
+# def pil_to_np(img_PIL): #not needed in 1d
+#     '''Converts image in PIL format to np.array.
     
-    From W x H x C [0...255] to C x W x H [0..1]
-    '''
-    ar = np.array(img_PIL)
+#     From W x H x C [0...255] to C x W x H [0..1]
+#     '''
+#     ar = np.array(img_PIL)
 
-    if len(ar.shape) == 3:
-        ar = ar.transpose(2,0,1)
-    else:
-        ar = ar[None, ...]
+#     if len(ar.shape) == 3:
+#         ar = ar.transpose(2,0,1)
+#     else:
+#         ar = ar[None, ...]
 
-    return ar.astype(np.float32) / 255.
+#     return ar.astype(np.float32) / 255.
 
-def np_to_pil(img_np): #not needed in 1d
-    '''Converts image in np.array format to PIL image.
+# def np_to_pil(img_np): #not needed in 1d
+#     '''Converts image in np.array format to PIL image.
     
-    From C x W x H [0..1] to  W x H x C [0...255]
-    '''
-    ar = np.clip(img_np*255,0,255).astype(np.uint8)
+#     From C x W x H [0..1] to  W x H x C [0...255]
+#     '''
+#     ar = np.clip(img_np*255,0,255).astype(np.uint8)
     
-    if img_np.shape[0] == 1:
-        ar = ar[0]
-    else:
-        ar = ar.transpose(1, 2, 0)
+#     if img_np.shape[0] == 1:
+#         ar = ar[0]
+#     else:
+#         ar = ar.transpose(1, 2, 0)
 
-    return Image.fromarray(ar)
+#     return Image.fromarray(ar)
 
 def np_to_torch(img_np): #looks like no change for 1d
     '''Converts image in numpy.array to torch.Tensor.
@@ -196,14 +196,6 @@ def np_to_torch(img_np): #looks like no change for 1d
     
     return torch.from_numpy(img_np)[None, :] # why is [None, :] here?  -- to add one more dimension?
 
-        '''
-        img_np = np.array([0])
-        print(torch.from_numpy(img_np))
-        print(torch.from_numpy(img_np)[None, :])
-        tensor([0])
-        tensor([[0]])
-
-        '''
 
 def torch_to_np(img_var): #looks like no change for 1d???
     '''Converts an image in torch.Tensor format to np.array.
@@ -223,28 +215,28 @@ def optimize(optimizer_type, parameters, closure, LR, num_iter):
         LR: learning rate #no change
         num_iter: number of iterations  #no change
     """
-    if optimizer_type == 'LBFGS':
-        # Do several steps with adam first
-        optimizer = torch.optim.Adam(parameters, lr=0.001)
-        for j in range(100):
-            optimizer.zero_grad()
-            closure()
-            optimizer.step()
+#     if optimizer_type == 'LBFGS': #first do not need
+#         # Do several steps with adam first
+#         optimizer = torch.optim.Adam(parameters, lr=0.001)
+#         for j in range(100):
+#             optimizer.zero_grad()
+#             closure()
+#             optimizer.step()
 
-        print('Starting optimization with LBFGS')        
-        def closure2():
-            optimizer.zero_grad()
-            return closure()
-        optimizer = torch.optim.LBFGS(parameters, max_iter=num_iter, lr=LR, tolerance_grad=-1, tolerance_change=-1)
-        optimizer.step(closure2)
+#         print('Starting optimization with LBFGS')        
+#         def closure2():
+#             optimizer.zero_grad()
+#             return closure()
+#         optimizer = torch.optim.LBFGS(parameters, max_iter=num_iter, lr=LR, tolerance_grad=-1, tolerance_change=-1)
+#         optimizer.step(closure2)
 
-    elif optimizer_type == 'adam':
+    if optimizer_type == 'adam':
         print('Starting optimization with ADAM')
         optimizer = torch.optim.Adam(parameters, lr=LR)
-        
         for j in range(num_iter):
             optimizer.zero_grad()
             closure()
             optimizer.step()
+
     else:
         assert False
