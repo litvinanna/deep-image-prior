@@ -210,7 +210,7 @@ def optimize(optimizer_type, parameters, closure, LR, num_iter):
 
     Args:
         optimizer_type: 'LBFGS' of 'adam' #no change
-        parameters: list of Tensors to optimize over ## changable part!!!
+        parameters: list of Tensors to optimize over ## 
         closure: function, that returns loss variable #no change
         LR: learning rate #no change
         num_iter: number of iterations  #no change
