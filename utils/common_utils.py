@@ -233,10 +233,15 @@ def optimize(optimizer_type, parameters, closure, LR, num_iter):
     if optimizer_type == 'adam':
         print('Starting optimization with ADAM')
         optimizer = torch.optim.Adam(parameters, lr=LR)
+        loss = np.zeros(num_iter)
         for j in range(num_iter):
             optimizer.zero_grad()
-            closure()
+#             closure()
+            total_loss = closure()
+            loss[j] = total_loss
             optimizer.step()
+        return loss
 
     else:
         assert False
+        
