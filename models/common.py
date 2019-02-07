@@ -29,7 +29,7 @@ class Concat(nn.Module): # may need to rewrite later
         if np.all(np.array(inputs_shapes2) == min(inputs_shapes2)):
             inputs_ = inputs
         else:
-            print("wrong shapes:{}".format(inputs_shapes2))
+#             print("wrong shapes:{}".format(inputs_shapes2))
             target_shape2 = min(inputs_shapes2)   
 #             print("target_shape2:{}".format(target_shape2))
             inputs_ = []
