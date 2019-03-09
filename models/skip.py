@@ -40,7 +40,7 @@ def skip(
     cur_depth = None
 
     model = nn.Sequential()
-    model_tmp = model #у sequential есть метод add?
+    model_tmp = model 
 
     input_depth = num_input_channels
     for i in range(len(num_channels_down)):
@@ -49,7 +49,7 @@ def skip(
         skip = nn.Sequential()
 
         if num_channels_skip[i] != 0:
-            model_tmp.add(Concat(1, skip, deeper)) ##что за метод add?
+            model_tmp.add(Concat(1, skip, deeper)) 
         else:
             model_tmp.add(deeper)
         
